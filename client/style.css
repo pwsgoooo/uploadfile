@@ -1,0 +1,36 @@
+body,html{
+    margin:0; padding:0;
+}
+div.container{
+    width:66%;
+    margin: 5% 17%;
+    font-size: 1.4em;;
+}
+table{
+    border: 2px solid #333;
+    padding: 2%;
+}
+tr {
+    padding-top:2%;
+}
+td {width:11%; }
+table:hover{
+    box-shadow: -5px 0px 5px rgba(051,153,051,1);
+}
+a.move_a {
+    text-decoration: none;
+    color: purple;
+    font-weight: 700;
+    font-size: 1.2em;
+    display: block;
+    margin-top:5%;
+    text-align: center;
+}
+a.move_a:hover {
+    color:plum;
+}
+
+input:hover,
+label:hover{
+    cursor: pointer;
+}

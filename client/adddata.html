@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> addData </title>
+    <link rel="stylesheet" href="{{url_for('client',path='/style.css')}}">
+    <!-- <style>
+        input#file-upload-button{
+            background-color: tomato;
+        }
+    </style> -->
+</head>
+<body>
+
+    <div class="container">
+        <form action="/add" method="post">
+            <legend>
+                💵͜ (^ ̮ ^)› Collect datas 💗 ͜ (ᵔ ̮ ᵔ)›
+            </legend>
+
+            <label for="title"> T T </label>
+            <input type="text" name="title" id="title"/>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <label for="file"> file 선택 </label>
+            <input type="file" style="background-color: tomato; color:white; font-weight: 700;" name="file" id="file">
+            &nbsp;&nbsp;
+            <input type="submit" value="submit" style="background-color: tomato; color:white; font-weight: 700; border:none">
+        </form>
+    </div>
+</body>
+</html>

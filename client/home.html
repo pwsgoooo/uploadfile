@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="{{url_for('client',path='/style.css')}}">
+</head>
+<body>
+    <div class="container">
+        <h1> Let's play ! (´ε｀ ʃƪ)♡ </h1>
+    </div>
+        {% if datas %}
+    <div class="container">
+        {% for d in datas %}
+        <table>
+            <tr>
+                <th>id</th>
+                <th>title</th>
+                <th>favorite</th>
+                <th>delete</th>
+            </tr>
+    
+            <tr>
+                <td>{{d.id}}</td>
+                <td>{{d.title}}</td>
+                <td>{{d.favorite}}</td>
+                <td>d'not exist Exit !!</td>
+            </tr>
+        </table>
+        {% endfor %}
+        <a href="/adddata" class="move_a"> Data 하나 더 </a>
+    </div>
+    {% else %}
+    <div class="container">
+        <a href="/adddata"  class="move_a"> Data 추가 ༼ ᓄºل͟º ༽ᓄ  </a>
+    </div>
+    {% endif %}
+    
+</body>
+</html>
