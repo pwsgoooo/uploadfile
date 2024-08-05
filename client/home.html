@@ -1,41 +1,41 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home</title>
-    <link rel="stylesheet" href="{{url_for('client',path='/style.css')}}">
-</head>
-<body>
+    <link rel="stylesheet" href="{{url_for('client',path='/style.css')}}" />
+  </head>
+  <body>
+
     <div class="container">
-        <h1> Let's play ! (´ε｀ ʃƪ)♡ </h1>
+      <h1>Let's play ! (´ε｀ ʃƪ)♡</h1>
     </div>
-        {% if datas %}
-    <div class="container">
-        {% for d in datas %}
-        <table>
-            <tr>
-                <th>id</th>
-                <th>title</th>
-                <th>favorite</th>
-                <th>delete</th>
-            </tr>
-    
-            <tr>
-                <td>{{d.id}}</td>
-                <td>{{d.title}}</td>
-                <td>{{d.favorite}}</td>
-                <td>d'not exist Exit !!</td>
-            </tr>
-        </table>
+    {% if datas %}
+    <table>
+        <tr>
+            <th>id</th>
+            <th>title</th>
+            <th>이미지보기</th>
+            <th>delete</th>
+        </tr>
+      {% for d in datas %}
+        <tr>
+          <td>{{d.id}}</td>
+          <td>{{d.title}}</td>
+          <td>
+            <a href=""><img src="https://{S3_BUCKET}.s3.{S3_REGION}.amazonaws.com/{d.filename}" alt=""></a>
+          </td>
+          <td>d'not exist Exit !!</td>
+        </tr>
         {% endfor %}
-        <a href="/adddata" class="move_a"> Data 하나 더 </a>
+    </table>
+      <a href="/adddata" class="move_a"> Data 하나 더 </a>
     </div>
     {% else %}
     <div class="container">
-        <a href="/adddata"  class="move_a"> Data 추가 ༼ ᓄºل͟º ༽ᓄ  </a>
+      <a href="/adddata" class="move_a"> Data 추가 ༼ ᓄºل͟º ༽ᓄ </a>
     </div>
     {% endif %}
-    
-</body>
+  </body>
 </html>

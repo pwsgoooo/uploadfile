@@ -4,11 +4,12 @@ from sqlalchemy.ext.declarative import declarative_base
 
 
 
-dburl = 'sqlite:///./sql_app.db'
+dburl = 'mysql+pymysql://test:Testtest12@localhost:3306/typeupload'
 
 engine = create_engine(
-    dburl,connect_args={"check_same_thread" : False}, pool_recycle=3600
+    dburl,echo=True
 )
+    # dburl,connect_args={"check_same_thread" : False}, pool_recycle=3600
 
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush= False, bind=engine))
 

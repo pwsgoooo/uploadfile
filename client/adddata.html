@@ -1,61 +1,97 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> addData </title>
-    <link rel="stylesheet" href="{{url_for('client',path='/style.css')}}">
-    <!-- <style>
-        input#file-upload-button{
-            background-color: tomato;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>addData</title>
+    <link rel="stylesheet" href="{{url_for('client',path='/style.css')}}" />
+    <script>
+      function handleFileSelect(event) {
+        const file = event.target.files[0];
+
+        if (file) {
+          // 파일명
+          console.log("File Name:", file.name);
+
+          // 콘텐츠 타입
+          console.log("Content Type:", file.type);
+
+          // 파일 내용
+          const reader = new FileReader();
+
+          reader.onload = function (e) {
+            console.log("File Content:", e.target.result);
+          };
+          //   reader.readAsText(file);
+          reader.readAsArrayBuffer(file);
+          //   reader.readAsDataURL(file);
         }
-    </style> -->
-</head>
-<body>
-
+      }
+    </script>
+  </head>
+  <body>
     <div class="container">
-        <form action="/adddata" method="post" id="uploadForm">
-            <legend>
-                💵͜ (^ ̮ ^)› Collect datas 💗 ͜ (ᵔ ̮ ᵔ)›
-            </legend>
+      <form
+        action="/add"
+        method="post"
+        id="uploadForm"
+        enctype="multipart/form-data"
+      >
+        <legend>💵͜ (^ ̮ ^)› Collect datas 💗 ͜ (ᵔ ̮ ᵔ)›</legend>
 
-            <label for="title"> T T </label>
-            <input type="text" name="title" id="title"/>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <label for="file"> file 선택 </label>
-            <input type="file" style="background-color: tomato; color:white; font-weight: 700;" name="file" id="file">
-            &nbsp;&nbsp;
-            <input type="submit" id="submit" style="background-color: tomato; color:white; font-weight: 700; border:none">
-        </form>
+        <label for="id"> I D </label>
+        <input type="number" name="id" id="id" />
+
+        <label for="title"> T T </label>
+        <input type="text" name="title" id="title" />
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <label for="file"> file 선택 </label>
+        <input
+          type="file"
+          style="background-color: tomato; color: white; font-weight: 700"
+          name="file"
+          id="file"
+          accept="image/png"
+          onchange="handleFileSelect(event)"
+        />
+        &nbsp;&nbsp;
+        <input
+          type="submit"
+          id="submit"
+          style="
+            background-color: tomato;
+            color: white;
+            font-weight: 700;
+            border: none;
+          "
+        />
+      </form>
     </div>
 
     <script defer>
-        document.getElementById('submit').addEventListener('click', async (e) => {
-          e.preventDefault();
-          const form = document.getElementById('uploadForm');
-          const formData = new FormData(form);
+      document.getElementById("submit").addEventListener("click", async (e) => {
+        e.preventDefault();
+        const form = document.getElementById("uploadForm");
+        const formData = new FormData(form);
 
-          const fileInputs = document.querySelectorAll('input[type="file"]');
+        console.log("Form Data:", formData);
+        const file = document.querySelectorAll('input[type="file"]');
+        const id = document.getElementById("id").value;
+        const title = document.getElementById("title").value;
 
+        formData.append("file", file[0].files[0]);
+        formData.append("id", id);
+        formData.append("title", title);
 
-
-
-          if (fileInputs[0].files.length > 0) {
-              formData.append('file', fileInputs[0].files[0]);
-          }
-          
-
-          const title = document.getElementById("title").value;
-          
-
-          fetch('/adddata',{
-            method :'POST',
-            body : formData})
-          .then(response => response.json())
-          .then(data => console.log(data))
-          .then(window.location.href='/')
-          .catch(error => console.error('Error:', error));
-          });
-      </script>
-</body>
+        const response = await fetch("/adddata", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => console.log(data))
+          .then((window.location.href = "/"))
+          .catch((error) => console.error("Error:", error));
+      });
+    </script>
+  </body>
 </html>
