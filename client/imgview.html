@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>imgview</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="modal_content">
+        <img
+          id="image"
+          class="viewclose"
+          src="data:image/jpeg;base64,{{image_bytes}}"
+          alt="pngimage"
+          style="
+            height: auto;
+            width: 20%;
+            background-color: #ffab0f;
+            margin: auto 40%;
+          "
+        />
+      </div>
+      <script defer>
+        const image_id = "{{image_id}}";
+        function loadImage(image_id) {
+          const imgElement = document.getElementById("image");
+          imgElement.src =
+            "http://localhost:8000/imageview/" + `${image_id}` + "/stream";
+          //   imgElement.src = `data:image/png;base64,${image_bytes}`;
+        }
+        val = parseInt(image_id, 10);
+        loadImage(val);
+      </script>
+    </div>
+  </body>
+</html>

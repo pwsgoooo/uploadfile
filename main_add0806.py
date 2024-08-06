@@ -8,6 +8,7 @@ import os
 from PIL import Image
 from io import BytesIO
 import base64
+import builtins
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from fastapi.middleware.cors import CORSMiddleware
@@ -21,7 +22,6 @@ from typing import Optional
 
 # Base.metadata.drop_all(bind=engine)
 # Base.metadata.create_all(bind=engine)
-# mysql에 폼전송데이터가 저장이 되는 main.py임
 
 app = FastAPI()
 app.mount('/client',StaticFiles(directory=str(Path(__file__).parent.absolute()/'client')), name='client')
@@ -37,9 +37,9 @@ app.add_middleware(
 templates = Jinja2Templates(directory='client')
 
 
-fileloc = '/fileloc'
-if not os.path.exists(fileloc):
-    os.makedirs(fileloc)
+uploadfiles = '/uploadfiles'
+if not os.path.exists(uploadfiles):
+    os.makedirs(uploadfiles)
 
 
 def get_db():
@@ -49,14 +49,14 @@ def get_db():
     finally:
         db.close()
 
-def save_img_to_file(id: int, file_fath : str, db:Session=Depends(get_db)):
-    img = db.query(BinaryImage).filter(BinaryImage.id == id).first()
+# def save_img_to_file(id: int, file_fath : str, db:Session=Depends(get_db)):
+#     img = db.query(BinaryImage).filter(BinaryImage.id == id).first()
 
-    if img is None:
-        raise ValueError('Img not found')
+#     if img is None:
+#         raise ValueError('Img not found')
     
-    with open (file_fath,'wb') as f:
-        f.write(img.content)
+#     with open (file_fath,'wb') as f:
+#         f.write(img.content)
 
 
 @app.get('/',response_class=HTMLResponse)
@@ -82,10 +82,10 @@ async def add_data(id:int=Form(...), title:str=Form(...), file:UploadFile=File(.
     buf.seek(0)
     bdata = buf.getvalue()
 
-
-    joinfileloc = os.path.join(fileloc,file.filename)
-    with open(joinfileloc, 'wb') as f:
-        f.write(bdata)
+    # 파일로 저장은 작동안함
+    # joinuploadfiles = os.path.join(uploadfiles,file.filename)
+    # with open(joinuploadfiles, 'wb') as f:
+    #     f.write(bdata)
 
     result = base64.b64decode(bdata)
 
@@ -94,36 +94,57 @@ async def add_data(id:int=Form(...), title:str=Form(...), file:UploadFile=File(.
     new_d = BinaryImage(id = id,title = title,filename = file.filename, content=result)
     db.add(new_d)
     print("datalist update finished")
-
-
     db.commit()
     db.refresh(new_d)
 
     return form_data
 
-@app.get("/{image_id}",response_class=HTMLResponse)
-async def get_image(image_id: int, db: Session = Depends(get_db)):
+@app.get("/imageview/{image_id}",response_class=HTMLResponse)
+async def get_image(request:Request, image_id: int, db: Session = Depends(get_db)):
+    img = db.query(BinaryImage).filter(BinaryImage.id == image_id).first()
+
+
+    if img is None:
+        raise HTTPException(status_code=404, detail="Image not found")
+
+    return templates.TemplateResponse('imgview.html',{"request":request,"db":db,"image_id": image_id})
+
+
+
+
+def create_image_with_binary_data(binary_data: bytes) -> Image:
+    # 바이너리 데이터를 BytesIO 객체로 변환
+    buffer = BytesIO(binary_data)
+    
+    # BytesIO 객체를 사용하여 이미지 열기
+    image = Image.open(buffer)
+    
+    return image
+
+@app.get("/imageview/{image_id}/stream",response_class=StreamingResponse)
+async def get_image(request:Request, image_id: int,  db: Session = Depends(get_db)):
     img = db.query(BinaryImage).filter(BinaryImage.id == image_id).first()
     if img is None:
         raise HTTPException(status_code=404, detail="Image not found")
+
+    if not isinstance(img.content, bytes):
+        raise HTTPException(status_code=500, detail="Invalid image data format")
     
-    # 이미지 바이너리 데이터를 StreamingResponse로 반환
-    return StreamingResponse(BytesIO(img.content), media_type='image/png', headers={"Content-Disposition": f"inline; filename={img.filename}"})
 
-
-@app.get("/", response_class=HTMLResponse)
-async def read_root(db:Session=Depends(get_db)):
-
-    ids = db.query(BinaryImage).all()
-    image_ids = []
-    for image_id in len(ids):
-        image_ids.append(image_id['id'])
-
-    print(image_ids)
-
-    html_content = "<html><body><h1>Image Gallery</h1>"
-    for image_id in image_ids:
-        html_content += f'<p><img src="/"/{image_id}" alt="Image {image_id}" style="max-width: 100%; height: auto;"></p>'
-    html_content += "</body></html>"
     
-    return HTMLResponse(content=html_content)
+
+    blob_data = img.content
+    # imgobj = Image.open(buf)
+
+    print("blob_data:",blob_data)
+
+    # b_data = base64.b64encode(blob_data).decode('utf-8')
+    buf = BytesIO(blob_data)
+    
+    buf.seek(0)
+
+    print("buf:",buf)
+
+
+
+    return StreamingResponse (buf,media_type='image/jpeg',headers={"Content-Disposition": f"inline; filename={img.filename}"})

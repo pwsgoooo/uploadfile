@@ -5,31 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home</title>
     <link rel="stylesheet" href="{{url_for('client',path='/style.css')}}" />
+
+    <script defer>
+      window.onload = function (){
+        let num = 0;
+        
+        const imgview = document.getElementsByClassName("filename");
+        
+        Array.from(imgview).forEach((element) => {
+          element.addEventListener("click", function(event){
+            // event.preventDefault();
+            num = parseInt(event.target.getAttribute('data-number'),10);
+            window.location.href = `http://localhost:8000/imageview/${num}`;
+
+            console.log(num);
+            console.log( `/imageview/${num}`);
+          });
+        });
+      };
+    </script>
+
   </head>
   <body>
-
-    <div class="container">
       <h1>Let's play ! (´ε｀ ʃƪ)♡</h1>
-    </div>
-    {% if datas %}
-    <table>
+        
+
+      {% if datas %}
+      <table >
         <tr>
-            <th>id</th>
-            <th>title</th>
-            <th>이미지보기</th>
-            <th>delete</th>
+          <th>id</th>
+          <th>title</th>
+          <th>filename</th>
+          <th>delete</th>
         </tr>
-      {% for d in datas %}
+        {% for d in datas %}
         <tr>
-          <td>{{d.id}}</td>
+          <td><a href="#" class="filename" data-number="{{d.id}}">{{d.id}}</a></td>
           <td>{{d.title}}</td>
           <td>
-            <a href=""><img src="https://{S3_BUCKET}.s3.{S3_REGION}.amazonaws.com/{d.filename}" alt=""></a>
+            <p >{{d.filename}}</p>
           </td>
           <td>d'not exist Exit !!</td>
         </tr>
         {% endfor %}
-    </table>
+      </table>
       <a href="/adddata" class="move_a"> Data 하나 더 </a>
     </div>
     {% else %}
@@ -39,3 +58,5 @@
     {% endif %}
   </body>
 </html>
+
+<!-- src="https://{S3_BUCKET}.s3.{S3_REGION}.amazonaws.com/{d.filename}" -->
